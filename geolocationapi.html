@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Get Your Current Address</h1>
+    <button class="btn">Click</button>
+    <p class="ans"></p>
+    <p class="ansl"></p>
+    <button class="location" disabled>Click For Location</button>
+
+    <script>
+      const myAPIKey = "";
+      let lat, lon;
+
+      const btn = document.querySelector(".btn");
+      const loc = document.querySelector(".location");
+      const ans = document.querySelector(".ans");
+      const ansl = document.querySelector(".ansl");
+
+      btn.addEventListener("click", () => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              lat = position.coords.latitude;
+              lon = position.coords.longitude;
+              ans.innerHTML = `Latitude: ${lat}`;
+              ansl.innerHTML = `Longitude: ${lon}`;
+
+              loc.disabled = false;
+            },
+            (error) => {
+              console.log(error.message);
+            }
+          );
+        } else {
+          alert("Geolocation is not supported by this browser.");
+        }
+      });
+
+      loc.addEventListener("click", async () => {
+        if (lat && lon) {
+          const reverseGeocodingUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lon}&apiKey=${myAPIKey}`;
+          try {
+            const response = await fetch(reverseGeocodingUrl);
+            const data = await response.json();
+            console.log(data);
+            if (data.features && data.features.length > 0) {
+              const addressLine2 = data.features[0].properties.address_line2;
+              console.log("Address Line 2:", addressLine2);
+
+              ansl.innerHTML = `Address: ${addressLine2}`;
+            } else {
+              console.log("No address data found.");
+            }
+          } catch (error) {
+            console.error("Error fetching location data:", error);
+          }
+        } else {
+          console.log("Latitude and Longitude are not set.");
+        }
+      });
+    </script>
+  </body>
+</html>
