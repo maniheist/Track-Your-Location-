@@ -11,15 +11,19 @@
     <p class="ans"></p>
     <p class="ansl"></p>
     <button class="location" disabled>Click For Location</button>
-
+    <h2>Your Address</h2>
+    <p class="ans2"></p>
+    <p class="ans3"></p>
     <script>
-      const myAPIKey = "";
+      const myAPIKey = "place your api";
       let lat, lon;
 
       const btn = document.querySelector(".btn");
       const loc = document.querySelector(".location");
       const ans = document.querySelector(".ans");
       const ansl = document.querySelector(".ansl");
+      const ans2 = document.querySelector(".ans2");
+      const ans3 = document.querySelector(".ans3");
 
       btn.addEventListener("click", () => {
         if (navigator.geolocation) {
@@ -50,9 +54,11 @@
             console.log(data);
             if (data.features && data.features.length > 0) {
               const addressLine2 = data.features[0].properties.address_line2;
+              const mandal = data.features[0].properties.county;
               console.log("Address Line 2:", addressLine2);
 
-              ansl.innerHTML = `Address: ${addressLine2}`;
+              ans2.innerHTML = `Address: ${addressLine2}`;
+              ans3.innerHTML = `Mandal:${mandal}`;
             } else {
               console.log("No address data found.");
             }
